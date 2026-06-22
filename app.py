@@ -22,13 +22,6 @@ def get_secret(key, default=""):
     except:
         return os.getenv(key, default)
 
-TOMTOM_KEY = get_secret("TOMTOM_API_KEY")
-
-st.write("TOMTOM KEY LOADED:", bool(TOMTOM_KEY))
-
-if TOMTOM_KEY:
-    st.write("KEY PREFIX:", TOMTOM_KEY[:6])
-
 
 # ── Secrets helper ────────────────────────────────────────────────────────────
 def get_secret(key, default=""):
