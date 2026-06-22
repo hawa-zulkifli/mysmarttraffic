@@ -1,12 +1,10 @@
-# 🚦 LALULINTAS — Klang Valley Traffic Intelligence
+# MySmartTraffic — Klang Valley Traffic Intelligence
 
-### Streamlit · TomTom Traffic API · HuggingFace flan-t5 · OpenWeatherMap
+# Streamlit · TomTom Traffic API · HuggingFace flan-t5 · OpenWeatherMap
 
-A real-time AI-powered traffic app for Klang Valley — **100% free APIs**.
+A real-time AI-powered traffic app for Klang Valley
 
----
-
-## Features
+# Features
 
 | Feature                           | Technology                  | Cost                 |
 | --------------------------------- | --------------------------- | -------------------- |
@@ -22,11 +20,11 @@ A real-time AI-powered traffic app for Klang Valley — **100% free APIs**.
 
 ---
 
-## Quick Start (Local)
+# Quick Start (Local)
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/lalulintas.git
-cd lalulintas
+git clone https://github.com/YOUR_USERNAME/mysmarttraffic.git
+cd mysmarttraffic
 pip install -r requirements.txt
 cp .env.example .env        # fill in your API keys
 python -m streamlit run app.py
@@ -36,9 +34,9 @@ Open http://localhost:8501
 
 ---
 
-## API Keys (All Free)
+# API Keys (All Free)
 
-### A) TomTom — Traffic + Routing
+# A) TomTom — Traffic + Routing
 
 1. Sign up at https://developer.tomtom.com
 2. Go to **My Apps → Create New App**
@@ -49,7 +47,7 @@ Open http://localhost:8501
 **Free tier:** 2,500 requests/day — sufficient for a prototype.
 The app **probes only 4 road midpoints** per page load to stay well within limits.
 
-### B) OpenWeatherMap — Weather
+# B) OpenWeatherMap — Weather
 
 1. Sign up at https://openweathermap.org/api
 2. Go to **API Keys** tab — default key is ready after signup
@@ -57,7 +55,7 @@ The app **probes only 4 road midpoints** per page load to stay well within limit
 
 **Free tier:** 60 calls/minute, 1,000,000 calls/month.
 
-### C) HuggingFace — AI Model (flan-t5-large)
+# C) HuggingFace — AI Model (flan-t5-large)
 
 1. Sign up at https://huggingface.co
 2. Go to **Settings → Access Tokens → New Token** (read access is enough)
@@ -70,7 +68,7 @@ Model used: `google/flan-t5-large` — an instruction-tuned text generation mode
 
 ---
 
-## AI Architecture
+# AI Architecture
 
 ```
 User query
@@ -95,12 +93,12 @@ The rule-based fallback is not a dummy — it reads live traffic & weather data 
 
 ---
 
-## Deploy to Streamlit Community Cloud
+# Deploy to Streamlit Community Cloud
 
 ```bash
 # 1. Push to GitHub (secrets.toml is gitignored)
 git init && git add . && git commit -m "init"
-git remote add origin https://github.com/YOUR/lalulintas.git
+git remote add origin https://github.com/YOUR/mysmarttraffic.git
 git push -u origin main
 
 # 2. Go to share.streamlit.io → New App
@@ -117,17 +115,16 @@ HF_API_KEY          = "hf_..."
 
 ---
 
-## Project Structure
+# Project Structure
 
 ```
-lalulintas/
+mysmarttraffic/
 ├── app.py                     # Streamlit UI (4 tabs)
 ├── requirements.txt
 ├── .env.example
 ├── .gitignore
 ├── .streamlit/
 │   ├── config.toml            # Dark theme
-│   └── secrets.toml           # Local secrets (gitignored)
 └── modules/
     ├── weather.py             # OpenWeatherMap
     ├── traffic.py             # TomTom Flow + Routing APIs
@@ -137,7 +134,7 @@ lalulintas/
 
 ---
 
-## Upgrading the AI
+# Upgrading the AI
 
 To use a more powerful free model, change `PRIMARY_MODEL` in `modules/ai_engine.py`:
 
@@ -149,7 +146,3 @@ To use a more powerful free model, change `PRIMARY_MODEL` in `modules/ai_engine.
 | `mistralai/Mistral-7B-Instruct-v0.2` | Excellent quality (may require HF Pro)     |
 
 ---
-
-## License
-
-MIT
