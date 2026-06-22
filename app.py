@@ -41,6 +41,9 @@ html, body, [class*="css"] { font-family: 'Syne', sans-serif; }
 #MainMenu, footer, header {
     visibility: visible !important;
 }
+.stToolbarActions.st-emotion-cache-1p1m4ay.epm40z22 {
+    display: none;
+}            
 header {
     visibility: visible !important;
 }
