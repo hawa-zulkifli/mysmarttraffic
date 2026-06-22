@@ -10,7 +10,10 @@ producing realistic KV-specific analysis without any API call.
 import requests
 import streamlit as st
 from datetime import datetime
+from zoneinfo import ZoneInfo
 import random
+
+now = datetime.now(ZoneInfo("Asia/Kuala_Lumpur"))
 
 HF_API_BASE = "https://api-inference.huggingface.co/models"
 
