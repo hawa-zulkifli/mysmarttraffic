@@ -125,8 +125,14 @@ from modules.map_view  import build_map
 from streamlit_folium  import st_folium
 
 # ── Header ────────────────────────────────────────────────────────────────────
-now_str  = datetime.now().strftime("%a %d %b · %H:%M")
-is_peak  = 7 <= datetime.now().hour <= 9 or 17 <= datetime.now().hour <= 19
+from datetime import datetime
+from zoneinfo import ZoneInfo
+
+now = datetime.now(ZoneInfo("Asia/Kuala_Lumpur"))
+
+now_str = now.strftime("%a %d %b · %H:%M")
+
+is_peak = (7 <= now.hour <= 9) or (17 <= now.hour <= 19)
 
 # API status badges
 badges = []
