@@ -24,9 +24,14 @@ FALLBACK_MODEL  = "google/flan-t5-base"
 
 def _build_context(traffic_data: dict, weather_data: dict) -> dict:
     """Structured context dict used by both HF and rule-based engines."""
-    hour     = datetime.now().hour
+    from zoneinfo import ZoneInfo
+    from datetime import datetime
+
+    now = datetime.now(ZoneInfo("Asia/Kuala_Lumpur"))
+
+    hour     = now.hour
+    day_name = now.strftime("%A")
     is_peak  = (7 <= hour <= 9) or (17 <= hour <= 19)
-    day_name = datetime.now().strftime("%A")
 
     roads   = traffic_data.get("roads", [])
     severe  = [r for r in roads if r["status"] == "SEVERE"]
