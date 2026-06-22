@@ -267,7 +267,7 @@ def get_ai_analysis(hf_api_key: str, traffic_data: dict, weather_data: dict) -> 
             model_used   = "google/flan-t5-large (HuggingFace)"
 
     # Build structured report
-    structured = _rule_based_analysis(ctx)
+    # structured = _rule_based_analysis(ctx)
 
     # Prepend HF-generated advisory if available
     # if hf_paragraph:
@@ -280,7 +280,7 @@ def get_ai_analysis(hf_api_key: str, traffic_data: dict, weather_data: dict) -> 
     #         f"**🤖 AI Advisory** *(rule-based engine — add HF_API_KEY for model inference)*\n\n"
     #     )
 
-    return header + structured
+    # return header + structured
 
 
 def ask_traffic_assistant(
