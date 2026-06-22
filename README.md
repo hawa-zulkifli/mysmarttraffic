@@ -1,4 +1,5 @@
 # 🚦 LALULINTAS — Klang Valley Traffic Intelligence
+
 ### Streamlit · TomTom Traffic API · HuggingFace flan-t5 · OpenWeatherMap
 
 A real-time AI-powered traffic app for Klang Valley — **100% free APIs**.
@@ -7,17 +8,17 @@ A real-time AI-powered traffic app for Klang Valley — **100% free APIs**.
 
 ## Features
 
-| Feature | Technology | Cost |
-|---|---|---|
-| 🗺 Interactive live map | Folium + CartoDB Dark tiles | Free |
-| 🚦 Live traffic flow tiles | TomTom Traffic Map API | Free (2,500 req/day) |
-| 🛣 Road speed data | TomTom Flow Segment API | Free |
-| 🔍 Route planner with ETA & delay | TomTom Routing API | Free |
-| ☁ Live weather + rain probability | OpenWeatherMap API | Free (1,000 req/day) |
-| 🤖 AI analysis report | HuggingFace flan-t5-large | Free (Inference API) |
-| 💬 Traffic assistant chatbot | flan-t5 + rule-based engine | Free |
-| 📈 Hourly congestion forecast | Altair chart | Free |
-| 🌡 Traffic heatmap | Folium HeatMap plugin | Free |
+| Feature                           | Technology                  | Cost                 |
+| --------------------------------- | --------------------------- | -------------------- |
+| 🗺 Interactive live map           | Folium + CartoDB Dark tiles | Free                 |
+| 🚦 Live traffic flow tiles        | TomTom Traffic Map API      | Free (2,500 req/day) |
+| 🛣 Road speed data                | TomTom Flow Segment API     | Free                 |
+| 🔍 Route planner with ETA & delay | TomTom Routing API          | Free                 |
+| ☁ Live weather + rain probability | OpenWeatherMap API          | Free (1,000 req/day) |
+| 🤖 AI analysis report             | HuggingFace flan-t5-large   | Free (Inference API) |
+| 💬 Traffic assistant chatbot      | flan-t5 + rule-based engine | Free                 |
+| 📈 Hourly congestion forecast     | Altair chart                | Free                 |
+| 🌡 Traffic heatmap                | Folium HeatMap plugin       | Free                 |
 
 ---
 
@@ -28,8 +29,9 @@ git clone https://github.com/YOUR_USERNAME/lalulintas.git
 cd lalulintas
 pip install -r requirements.txt
 cp .env.example .env        # fill in your API keys
-streamlit run app.py
+python -m streamlit run app.py
 ```
+
 Open http://localhost:8501
 
 ---
@@ -37,6 +39,7 @@ Open http://localhost:8501
 ## API Keys (All Free)
 
 ### A) TomTom — Traffic + Routing
+
 1. Sign up at https://developer.tomtom.com
 2. Go to **My Apps → Create New App**
 3. Enable: **Traffic API**, **Routing API**
@@ -47,6 +50,7 @@ Open http://localhost:8501
 The app **probes only 4 road midpoints** per page load to stay well within limits.
 
 ### B) OpenWeatherMap — Weather
+
 1. Sign up at https://openweathermap.org/api
 2. Go to **API Keys** tab — default key is ready after signup
 3. Add as `OPENWEATHER_API_KEY`
@@ -54,6 +58,7 @@ The app **probes only 4 road midpoints** per page load to stay well within limit
 **Free tier:** 60 calls/minute, 1,000,000 calls/month.
 
 ### C) HuggingFace — AI Model (flan-t5-large)
+
 1. Sign up at https://huggingface.co
 2. Go to **Settings → Access Tokens → New Token** (read access is enough)
 3. Add as `HF_API_KEY`
@@ -136,14 +141,15 @@ lalulintas/
 
 To use a more powerful free model, change `PRIMARY_MODEL` in `modules/ai_engine.py`:
 
-| Model | Notes |
-|---|---|
-| `google/flan-t5-large` | Default — fast, good instruction following |
-| `google/flan-t5-xl` | Larger, slower, better quality |
-| `tiiuae/falcon-7b-instruct` | Strong open LLM, may need more tokens |
-| `mistralai/Mistral-7B-Instruct-v0.2` | Excellent quality (may require HF Pro) |
+| Model                                | Notes                                      |
+| ------------------------------------ | ------------------------------------------ |
+| `google/flan-t5-large`               | Default — fast, good instruction following |
+| `google/flan-t5-xl`                  | Larger, slower, better quality             |
+| `tiiuae/falcon-7b-instruct`          | Strong open LLM, may need more tokens      |
+| `mistralai/Mistral-7B-Instruct-v0.2` | Excellent quality (may require HF Pro)     |
 
 ---
 
 ## License
+
 MIT
