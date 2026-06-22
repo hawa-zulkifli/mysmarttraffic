@@ -48,6 +48,9 @@ html, body, [class*="css"] { font-family: 'Syne', sans-serif; }
 #MainMenu, footer, header {
     visibility: visible !important;
 }
+header {
+    visibility: visible !important;
+}
 .main-header {
     background: linear-gradient(135deg,#0e1318,#141b22);
     border:1px solid #1e2d3a; border-radius:8px;
