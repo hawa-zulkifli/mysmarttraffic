@@ -30,6 +30,13 @@ cp .env.example .env        # fill in your API keys
 python -m streamlit run app.py
 ```
 
+# example of .env
+
+<!--
+TOMTOM_API_KEY      = "api key here"
+OPENWEATHER_API_KEY = "api key here"
+HF_API_KEY          = "api key here"   -->
+
 Open http://localhost:8501
 
 ---
