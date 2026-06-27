@@ -22,12 +22,6 @@ def get_secret(key, default=""):
     except:
         return os.getenv(key, default)
 
-
-# ── Secrets helper ────────────────────────────────────────────────────────────
-def get_secret(key, default=""):
-    try:    return st.secrets[key]
-    except: return os.getenv(key, default)
-
 TOMTOM_KEY      = get_secret("TOMTOM_API_KEY")
 OPENWEATHER_KEY = get_secret("OPENWEATHER_API_KEY")
 HF_API_KEY      = get_secret("HF_API_KEY")   # HuggingFace token
