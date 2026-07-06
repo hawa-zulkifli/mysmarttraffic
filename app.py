@@ -351,7 +351,7 @@ with tab_ai:
 
         hours  = [f"{h:02d}:00" for h in range(7,22)]
         levels = [65,85,70,45,40,38,42,50,55,90,95,88,70,55,40]
-        ch     = datetime.now().hour
+        ch     = (datetime.now(ZoneInfo("Asia/Kuala_Lumpur")).hour - 3) % 24
         df = pd.DataFrame({"Hour":hours,"Congestion":levels,
                            "Now":[h.startswith(f"{ch:02d}") for h in hours]})
 
