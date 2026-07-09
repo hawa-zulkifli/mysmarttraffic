@@ -18,7 +18,7 @@ HF_API_BASE = "https://router.huggingface.co/hf-inference/models"
 # Primary model: instruction-following, great for structured text generation
 PRIMARY_MODEL   = "google/flan-t5-large"
 # Fallback model: smaller, faster
-FALLBACK_MODEL  = "facebook/bart-large-cnn"
+FALLBACK_MODEL  = "google/flan-t5-base"
 
 
 # ── Context builder ───────────────────────────────────────────────────────────
