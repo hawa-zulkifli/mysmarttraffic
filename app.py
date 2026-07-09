@@ -24,7 +24,28 @@ def get_secret(key, default=""):
 
 TOMTOM_KEY      = get_secret("TOMTOM_API_KEY")
 OPENWEATHER_KEY = get_secret("OPENWEATHER_API_KEY")
-HF_API_KEY      = get_secret("HF_API_KEY")   # HuggingFace token
+import requests
+
+def validate_hf_key(api_key):
+    if not api_key:
+        return ""
+
+    try:
+        response = requests.get(
+            "https://huggingface.co",
+            timeout=5
+        )
+
+        if response.status_code == 200:
+            return api_key
+
+    except requests.RequestException:
+        pass
+
+    return ""
+
+
+HF_API_KEY = validate_hf_key(get_secret("HF_API_KEY"))
 
 # ── CSS ───────────────────────────────────────────────────────────────────────
 st.markdown("""
