@@ -26,17 +26,23 @@ TOMTOM_KEY      = get_secret("TOMTOM_API_KEY")
 OPENWEATHER_KEY = get_secret("OPENWEATHER_API_KEY")
 import requests
 
-def validate_hf_key(api_key):
+def validate_hf(api_key):
     if not api_key:
         return ""
 
     try:
-        response = requests.get(
-            "https://huggingface.co",
-            timeout=5
+        r = requests.post(
+            "https://router.huggingface.co/hf-inference/models/google/flan-t5-large",
+            headers={
+                "Authorization": f"Bearer {api_key}"
+            },
+            json={
+                "inputs": "Hello"
+            },
+            timeout=10
         )
 
-        if response.status_code == 200:
+        if r.status_code == 200:
             return api_key
 
     except requests.RequestException:
@@ -45,7 +51,7 @@ def validate_hf_key(api_key):
     return ""
 
 
-HF_API_KEY = validate_hf_key(get_secret("HF_API_KEY"))
+HF_API_KEY = validate_hf(get_secret("HF_API_KEY"))
 
 # ── CSS ───────────────────────────────────────────────────────────────────────
 st.markdown("""
