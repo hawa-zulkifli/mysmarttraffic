@@ -25,6 +25,7 @@ def get_secret(key, default=""):
 TOMTOM_KEY      = get_secret("TOMTOM_API_KEY")
 OPENWEATHER_KEY = get_secret("OPENWEATHER_API_KEY")
 HF_API_KEY      = get_secret("HF_API_KEY")   # HuggingFace token
+print("DEBUG HF KEY:", bool(HF_API_KEY))
 
 # ── CSS ───────────────────────────────────────────────────────────────────────
 st.markdown("""
