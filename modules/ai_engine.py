@@ -13,12 +13,12 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 import random
 
-HF_API_BASE = "https://api-inference.huggingface.co/models"
+HF_API_BASE = "https://router.huggingface.co/hf-inference/models"
 
 # Primary model: instruction-following, great for structured text generation
 PRIMARY_MODEL   = "google/flan-t5-large"
 # Fallback model: smaller, faster
-FALLBACK_MODEL  = "google/flan-t5-base"
+FALLBACK_MODEL  = "facebook/bart-large-cnn"
 
 
 # ── Context builder ───────────────────────────────────────────────────────────
