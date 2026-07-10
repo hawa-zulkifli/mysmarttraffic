@@ -1,10 +1,20 @@
 """
 modules/ai_engine.py
 --------------------
-Traffic analysis using HuggingFace Inference API (free tier).
-Model: google/flan-t5-large  — instruction-tuned, fast, free on HF Inference API.
+Traffic analysis using HuggingFace Inference Providers (free tier).
+
+NOTE (fixed after deployment issue, July 2026): google/flan-t5-large and
+flan-t5-base are NO LONGER served on HuggingFace's free serverless Inference
+API — HF restructured this into "Inference Providers" in 2025, and the old
+flan-t5 checkpoints return HTTP 404 (not 503 "loading"), which the previous
+version of this file silently swallowed as a generic failure. We now call
+the current OpenAI-compatible chat-completions router with small instruct
+models that ARE actively served, and surface the real error (see
+get_last_hf_error()) instead of failing silently.
+
 Falls back to a deterministic rule-based engine when no API key is provided,
-producing realistic KV-specific analysis without any API call.
+or when the HF call fails for any reason, producing realistic KV-specific
+analysis without any API call.
 """
 
 import requests
@@ -13,12 +23,25 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 import random
 
-HF_API_BASE = "https://router.huggingface.co/v1"
+# Current HF Inference Providers endpoint (OpenAI-compatible chat completions).
+# The old text-generation endpoint (router.huggingface.co/hf-inference/models/<model>)
+# no longer serves flan-t5-large/base — see note above.
+HF_API_BASE = "https://router.huggingface.co/v1/chat/completions"
 
-# Primary model: instruction-following, great for structured text generation
+# Primary/fallback chat models actively served via HF Inference Providers'
+# free monthly credits. Small + fast, good enough for short advisory text.
 PRIMARY_MODEL   = "meta-llama/Llama-3.2-3B-Instruct"
-# Fallback model: smaller, faster
-FALLBACK_MODEL  = "google/flan-t5-base"
+FALLBACK_MODEL  = "Qwen/Qwen2.5-1.5B-Instruct"
+
+# Populated by _call_hf_api with the most recent failure reason, so the UI
+# can show *why* it fell back to the rule-based engine instead of just
+# silently doing so.
+_last_hf_error = None
+
+
+def get_last_hf_error():
+    """Return the most recent HF API error (or None if the last call succeeded)."""
+    return _last_hf_error
 
 
 # ── Context builder ───────────────────────────────────────────────────────────
@@ -87,47 +110,64 @@ def _build_hf_prompt(ctx: dict) -> str:
 # ── HuggingFace Inference API call ───────────────────────────────────────────
 
 def _call_hf_api(api_key: str, model: str, prompt: str,
-                  max_new_tokens: int = 200) -> str | None:
-    """Call HuggingFace Inference API. Returns generated text or None."""
+                  max_new_tokens: int = 200) -> "str | None":
+    """
+    Call HuggingFace Inference Providers (OpenAI-compatible chat completions).
+    Returns generated text, "MODEL_LOADING" on a 503, or None on failure.
+    On any failure, _last_hf_error is set with the real reason (status code +
+    response body) so callers/UI can surface *why* the AI call didn't work,
+    instead of silently falling back to the rule-based engine.
+    """
+    global _last_hf_error
     try:
-        headers = {"Authorization": f"Bearer {api_key}"}
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json",
+        }
         payload = {
-            "inputs": prompt,
-            "parameters": {
-                "max_new_tokens":   max_new_tokens,
-                "temperature":      0.7,
-                "do_sample":        True,
-                "top_p":            0.92,
-                "repetition_penalty": 1.3,
-            },
-            "options": {"wait_for_model": True},
+            "model": model,
+            "messages": [{"role": "user", "content": prompt}],
+            "max_tokens": max_new_tokens,
+            "temperature": 0.7,
+            "top_p": 0.92,
         }
         resp = requests.post(
-            f"{HF_API_BASE}/{model}",
+            HF_API_BASE,
             headers=headers,
             json=payload,
             timeout=30,
         )
+
+        if resp.status_code == 503:
+            _last_hf_error = f"{model}: 503 model loading — retrying with fallback"
+            return "MODEL_LOADING"
+
         resp.raise_for_status()
         result = resp.json()
 
-        if isinstance(result, list) and result:
-            text = result[0].get("generated_text", "")
-        elif isinstance(result, dict):
-            text = result.get("generated_text", "")
-        else:
+        choices = result.get("choices", [])
+        if not choices:
+            _last_hf_error = f"{model}: response had no 'choices' — {str(result)[:200]}"
             return None
 
-        # flan-t5 echoes the prompt — strip it
-        if prompt in text:
-            text = text.replace(prompt, "").strip()
-        return text.strip() if text.strip() else None
+        text = choices[0].get("message", {}).get("content", "")
+        if not text or not text.strip():
+            _last_hf_error = f"{model}: empty content in response"
+            return None
+
+        _last_hf_error = None
+        return text.strip()
 
     except requests.exceptions.HTTPError as e:
-        if e.response.status_code == 503:
-            return "MODEL_LOADING"
+        body = e.response.text[:300] if e.response is not None else "(no body)"
+        code = e.response.status_code if e.response is not None else "?"
+        _last_hf_error = f"{model}: HTTP {code} — {body}"
         return None
-    except Exception:
+    except requests.exceptions.RequestException as e:
+        _last_hf_error = f"{model}: network/timeout error — {e}"
+        return None
+    except Exception as e:
+        _last_hf_error = f"{model}: unexpected error — {e}"
         return None
 
 
@@ -252,7 +292,8 @@ def _rule_based_analysis(ctx: dict) -> str:
 def get_ai_analysis(hf_api_key: str, traffic_data: dict, weather_data: dict) -> str:
     """
     Generate traffic analysis report.
-    1. Try HuggingFace flan-t5-large for AI-generated advisory paragraph.
+    1. Try HuggingFace Inference Providers (PRIMARY_MODEL) for an AI-generated
+       advisory paragraph, falling back to FALLBACK_MODEL on failure/loading.
     2. Wrap with structured rule-based sections for rich display.
     """
     ctx    = _build_context(traffic_data, weather_data)
@@ -264,13 +305,16 @@ def get_ai_analysis(hf_api_key: str, traffic_data: dict, weather_data: dict) -> 
     if hf_api_key:
         # Try primary model
         text = _call_hf_api(hf_api_key, PRIMARY_MODEL, prompt, max_new_tokens=180)
-        if text == "MODEL_LOADING":
-            # Try fallback
+        used_model = PRIMARY_MODEL
+        if text == "MODEL_LOADING" or text is None:
+            # Try fallback (covers 503-loading and any other failure, e.g.
+            # primary model temporarily unavailable on the routed provider)
             text = _call_hf_api(hf_api_key, FALLBACK_MODEL, prompt, max_new_tokens=150)
+            used_model = FALLBACK_MODEL
 
         if text and text != "MODEL_LOADING" and len(text) > 20:
             hf_paragraph = text
-            model_used   = "google/flan-t5-large (HuggingFace)"
+            model_used   = f"{used_model} (HuggingFace)"
 
     # Build structured report
     structured = _rule_based_analysis(ctx)
@@ -322,7 +366,7 @@ def ask_traffic_assistant(
         text = _call_hf_api(hf_api_key, PRIMARY_MODEL, prompt, max_new_tokens=150)
         if text and text != "MODEL_LOADING" and len(text) > 15:
             return f"🤖 {text}"
-        # Fallback to base model
+        # Fallback to smaller model (covers 503-loading and any other failure)
         text = _call_hf_api(hf_api_key, FALLBACK_MODEL, prompt, max_new_tokens=120)
         if text and text != "MODEL_LOADING" and len(text) > 15:
             return f"🤖 {text}"
