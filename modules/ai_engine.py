@@ -13,7 +13,7 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 import random
 
-HF_API_BASE = "https://router.huggingface.co/hf-inference/models"
+HF_API_BASE = "https://router.huggingface.co/v1"
 
 # Primary model: instruction-following, great for structured text generation
 PRIMARY_MODEL   = "meta-llama/Llama-3.2-3B-Instruct"
