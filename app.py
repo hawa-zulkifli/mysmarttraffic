@@ -1,6 +1,6 @@
 """
 MY SMART TRAFFIC — Klang Valley Traffic Intelligence
-Streamlit app · TomTom API · HuggingFace flan-t5 · OpenWeatherMap
+Streamlit app · TomTom API · HuggingFace meta-llama/Llama-3.2-1B-Instruct · OpenWeatherMap
 """
 
 import streamlit as st
@@ -171,7 +171,7 @@ with st.sidebar:
     <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#5a7a8a;line-height:2.2">
     ● TomTom Traffic API (free tier)<br>
     ● OpenWeatherMap API (free tier)<br>
-    ● HuggingFace flan-t5-large<br>
+    ● HuggingFace meta-llama/Llama-3.2-1B-Instruct<br>
     ● Rule-based KV traffic engine
     </div>""", unsafe_allow_html=True)
 
