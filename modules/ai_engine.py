@@ -16,7 +16,7 @@ import random
 HF_API_BASE = "https://router.huggingface.co/hf-inference/models"
 
 # Primary model: instruction-following, great for structured text generation
-PRIMARY_MODEL   = "google/flan-t5-large"
+PRIMARY_MODEL   = "meta-llama/Llama-3.2-3B-Instruct"
 # Fallback model: smaller, faster
 FALLBACK_MODEL  = "google/flan-t5-base"
 
