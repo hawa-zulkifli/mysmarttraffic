@@ -31,7 +31,7 @@ HF_API_BASE = "https://router.huggingface.co/v1/chat/completions"
 # Primary/fallback chat models actively served via HF Inference Providers'
 # free monthly credits. Small + fast, good enough for short advisory text.
 PRIMARY_MODEL   = "meta-llama/Llama-3.2-3B-Instruct"
-FALLBACK_MODEL  = "HuggingFaceH4/zephyr-7b-beta"
+FALLBACK_MODEL  = "google/gemma-2-2b-it"
 
 # Populated by _call_hf_api with the most recent failure reason, so the UI
 # can show *why* it fell back to the rule-based engine instead of just
