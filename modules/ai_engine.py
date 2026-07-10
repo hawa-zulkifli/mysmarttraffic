@@ -23,9 +23,7 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 import random
 
-# Current HF Inference Providers endpoint (OpenAI-compatible chat completions).
-# The old text-generation endpoint (router.huggingface.co/hf-inference/models/<model>)
-# no longer serves flan-t5-large/base — see note above.
+# Current HF Inference Providers endpoint
 HF_API_BASE = "https://router.huggingface.co/v1/chat/completions"
 
 # Primary/fallback chat models actively served via HF Inference Providers'
@@ -81,8 +79,7 @@ def _build_context(traffic_data: dict, weather_data: dict) -> dict:
 
 def _build_hf_prompt(ctx: dict) -> str:
     """
-    Build a concise prompt for flan-t5.
-    flan-t5 works best with clear task instructions under ~512 tokens.
+    Build a concise prompt for meta-llama/Llama-3.2-1B-Instruct.
     """
     severe_names  = ", ".join(r["name"] for r in ctx["severe"])  or "none"
     heavy_names   = ", ".join(r["name"] for r in ctx["heavy"])   or "none"
@@ -341,8 +338,7 @@ def ask_traffic_assistant(
     weather_data: dict,
 ) -> str:
     """
-    Conversational assistant using HF flan-t5 + rule-based fallback.
-    flan-t5 is not a conversational model, so we inject context into each turn.
+    Conversational assistant using HF meta-llama/Llama-3.2-1B-Instruct + rule-based fallback.
     """
     ctx = _build_context(traffic_data, weather_data)
 
