@@ -107,7 +107,7 @@ def _build_hf_prompt(ctx: dict) -> str:
 # ── HuggingFace Inference API call ───────────────────────────────────────────
 
 def _call_hf_api(api_key: str, model: str, prompt: str,
-                  max_new_tokens: int = 200) -> "str | None":
+                  max_new_tokens: int = 600) -> "str | None":
     """
     Call HuggingFace Inference Providers (OpenAI-compatible chat completions).
     Returns generated text, "MODEL_LOADING" on a 503, or None on failure.
@@ -301,7 +301,7 @@ def get_ai_analysis(hf_api_key: str, traffic_data: dict, weather_data: dict) -> 
 
     if hf_api_key:
         # Try primary model
-        text = _call_hf_api(hf_api_key, PRIMARY_MODEL, prompt, max_new_tokens=180)
+        text = _call_hf_api(hf_api_key, PRIMARY_MODEL, prompt, max_new_tokens=600)
         used_model = PRIMARY_MODEL
         if text == "MODEL_LOADING" or text is None:
             # Try fallback (covers 503-loading and any other failure, e.g.
