@@ -328,11 +328,12 @@ with tab_ai:
     col_l, col_r = st.columns([3, 2])
 
     with col_l:
-        model_label = "google/flan-t5-large (HuggingFace)" if HF_API_KEY else "Rule-based engine (no HF key)"
+        from modules.ai_engine import PRIMARY_MODEL, get_last_hf_error
+        model_label = f"{PRIMARY_MODEL} (HuggingFace)" if HF_API_KEY else "Rule-based engine (no HF key)"
         st.markdown(f'<p class="section-head">🤖 AI Traffic Analysis · {model_label}</p>', unsafe_allow_html=True)
 
         if not HF_API_KEY:
-            st.info("💡 Add your free **HF_API_KEY** (HuggingFace token) in secrets to enable flan-t5 ML inference. Running rule-based analysis now.")
+            st.info("💡 Add your free **HF_API_KEY** (HuggingFace token) in secrets to enable ML inference. Running rule-based analysis now.")
 
         if st.button("🔄 Refresh Analysis", width='stretch'):
             st.cache_data.clear()
@@ -344,6 +345,14 @@ with tab_ai:
             st.markdown(f'<div class="ai-box">{ai_text}</div>', unsafe_allow_html=True)
         else:
             st.error("Analysis failed.")
+
+        # Debug: show the real reason the HF call fell back to rule-based,
+        # instead of failing silently (helps diagnose deployment issues).
+        if HF_API_KEY and "🤖 AI Advisory" in ai_text and "---" not in ai_text:
+            last_err = get_last_hf_error()
+            if last_err:
+                with st.expander("⚠️ AI model fell back to rule-based engine — why?"):
+                    st.code(last_err, language=None)
 
     with col_r:
         st.markdown('<p class="section-head">📈 Congestion Forecast · Today</p>', unsafe_allow_html=True)
@@ -388,7 +397,8 @@ with tab_ai:
 # TAB 4 — CHAT ASSISTANT
 # ════════════════════════════════════════════════════════
 with tab_chat:
-    st.markdown(f'<p class="section-head">💬 Traffic Assistant · {"flan-t5-large" if HF_API_KEY else "Rule-based engine"}</p>', unsafe_allow_html=True)
+    from modules.ai_engine import PRIMARY_MODEL as _CHAT_MODEL
+    st.markdown(f'<p class="section-head">💬 Traffic Assistant · {_CHAT_MODEL if HF_API_KEY else "Rule-based engine"}</p>', unsafe_allow_html=True)
 
     if not HF_API_KEY:
         st.info("Running keyword-based assistant. Add **HF_API_KEY** (free at huggingface.co) for AI-powered replies.")
